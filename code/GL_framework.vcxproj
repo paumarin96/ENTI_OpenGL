@@ -137,20 +137,48 @@ xcopy "$(ProjectDir)libs\SDL2.dll" "$(OutDir)" /y /d</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Camera\Camera.cpp" />
     <ClCompile Include="include\imgui\imgui.cpp" />
     <ClCompile Include="include\imgui\imgui_demo.cpp" />
     <ClCompile Include="include\imgui\imgui_draw.cpp" />
     <ClCompile Include="include\imgui\imgui_impl_sdl_gl3.cpp" />
-    <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\Lighting\Light.cpp" />
+    <ClCompile Include="src\Lighting\Lighting.cpp" />
+    <ClCompile Include="src\Mesh\Billboard.cpp" />
+    <ClCompile Include="src\Mesh\CastleMap.cpp" />
+    <ClCompile Include="src\Mesh\Renderer.cpp" />
+    <ClCompile Include="src\Object\BillboardObject.cpp" />
+    <ClCompile Include="src\Object\MeshObject.cpp" />
+    <ClCompile Include="src\Shader\Material.cpp" />
+    <ClCompile Include="src\Mesh\Mesh.cpp" />
+    <ClCompile Include="src\Object\Object.cpp" />
+    <ClCompile Include="src\Mesh\MeshLoader.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\render.cpp" />
-    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\Shader\Shader.cpp" />
+    <ClCompile Include="src\Spline\Spline.cpp" />
+    <ClCompile Include="src\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="src\Camera\Camera.h" />
     <ClInclude Include="include\RenderVars.h" />
-    <ClInclude Include="src\Mesh.h" />
+    <ClInclude Include="src\Lighting\Light.h" />
+    <ClInclude Include="src\Lighting\Lighting.h" />
+    <ClInclude Include="src\Mesh\Billboard.h" />
+    <ClInclude Include="src\Mesh\CastleMap.h" />
+    <ClInclude Include="src\Mesh\Renderer.h" />
+    <ClInclude Include="src\Object\BillboardObject.h" />
+    <ClInclude Include="src\Object\MeshObject.h" />
+    <ClInclude Include="src\Shader\Material.h" />
+    <ClInclude Include="src\Mesh\Mesh.h" />
+    <ClInclude Include="src\Object\Object.h" />
+    <ClInclude Include="src\Mesh\MeshLoader.h" />
     <ClInclude Include="src\Exercise.h" />
-    <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\Shader\Shader.h" />
+    <ClInclude Include="src\Spline\Spline.h" />
+    <ClInclude Include="src\stb_image.h" />
+    <ClInclude Include="src\Transform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

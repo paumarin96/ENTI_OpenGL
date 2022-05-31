@@ -3,8 +3,8 @@
 #include <glm/glm.hpp>
 namespace RenderVars {
 	const float FOV = glm::radians(65.f);
-	const float zNear = 1.f;
-	const float zFar = 50.f;
+	const float zNear = 0.1f;
+	const float zFar = 5000.f;
 
 	glm::mat4 _projection;
 	glm::mat4 _modelView;

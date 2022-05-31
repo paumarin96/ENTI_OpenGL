@@ -13,11 +13,12 @@ extern void GLmousecb(MouseEvent ev);
 extern void GLResize(int width, int height);
 extern void GLinit(int width, int height);
 extern void GLcleanup();
+extern void GLupdate(float dt);
 extern void GLrender(float dt);
 
 //////
 namespace {
-	const int expected_fps = 144;
+	const int expected_fps = 120;
 	const double expected_frametime = 1.0 / expected_fps;
 	const uint32_t expected_frametime_ms = (uint32_t) (1e3 * expected_frametime);
 	uint32_t prev_frametimestamp = 0;
@@ -53,6 +54,7 @@ int main(int argc, char** argv) {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 	mainwindow = SDL_CreateWindow("GL_framework", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
@@ -111,6 +113,7 @@ int main(int argc, char** argv) {
 				MouseEvent::Button::None)))};
 			GLmousecb(ev);
 		}
+		GLupdate((float)expected_frametime);
 		GLrender((float)expected_frametime);
 
 		SDL_GL_SwapWindow(mainwindow);

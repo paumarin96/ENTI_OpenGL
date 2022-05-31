@@ -1,0 +1,16 @@
+#version 330
+
+in vec4 vert_Normal;
+vec4 objectColor;
+vec4 lightColor;
+out vec4 color;
+
+void main(){
+    objectColor = vec4(0.4f,0.7f,0.6f,1);
+    lightColor = vec4(0.1f, 0.7f, 0.3f,1);
+    float ambientStrength = 0.1f;
+    vec3 ambient = ambientStrength * lightColor;
+
+    vec3 result = ambient * objectColor;
+    color = result;
+}

@@ -1,6 +1,7 @@
 #pragma once
-#include "Mesh.h"
+#include "Mesh/MeshLoader.h"
 #include "RenderVars.h"
+#include "Shader/Shader.h"
 namespace Utils
 {
 	GLuint compileShader(const char* shaderStr, GLenum shaderType, const char* name = "") {
@@ -137,6 +138,8 @@ namespace Exercise
 	}
 }
 
+//extern GLuint compileShader(const char* shaderStr, GLenum shaderType, const char* name = "");
+
 namespace OBJLoading
 {
 	GLuint program;
@@ -146,51 +149,50 @@ namespace OBJLoading
 	GLuint NormalVAO;
 	GLuint NormalVBO;
 	glm::mat4 objMat;
-	Mesh mesh;
+	Mesh::MeshLoader mesh;
+
+	glm::vec3 lightDir;
 
 	glm::vec4 lightColor;
+	glm::vec4 ambientColor;
 	glm::vec4 objectColor;
 
-	//Vertex shader
-	static const char* vertex_shader_source ="#version 330\n\
-		layout (location = 0) in vec3 in_Position;\n\
-		layout (location = 1) in vec3 in_Normal;\n\
-		out vec4 vert_Normal;\n\
-		uniform mat4 objMat;\n\
-		uniform mat4 mv_Mat;\n\
-		uniform mat4 mvpMat;\n\
-		void main() {\n\
-			gl_Position = mvpMat * objMat * vec4(in_Position, 1.0);\n\
-			vert_Normal = mv_Mat * objMat * vec4(in_Normal, 0.0);\n\
-		}";
-	//Fragment shader
-	static const char* fragment_shader_source[] = {
-		"#version 330\n"
-		"\n"
-		"in vec4 vert_Normal;\n"
-		"out vec4 color;\n"
-		"void main(){\n"
-			"color = vert_Normal;\n"
-		"}"
-	};
+	float ambientStrength;
+	float specularStrength;
+	int specularIntensity;
+
+	Shader shader;
 
 
 	void init()
 	{
-		mesh = Mesh("basura.obj");
+		lightDir = glm::vec3(-1, -1, 0);
+		lightColor = glm::vec4(1, 0, 0, 1);
+		ambientColor = glm::vec4(0.25, 0.25, 0.25, 1);
+
+		shader = Shader("shader.vert", "shader.frag");
+		mesh = Mesh::MeshLoader("shiba.obj");
 		mesh.loadObj();
+
 		GLuint vertex_shader;
 		GLuint fragment_shader;
 		objMat = glm::mat4(1.f);
+
+		auto vert_shader = shader.GetVertexShader();
+		auto frag_shader = shader.GetFragmentShader();
+
+		const char* vertexShaderSource = vert_shader.data();
+		const char* fragmentShaderSource = frag_shader.data();
+
 		vertex_shader = glCreateShader(GL_VERTEX_SHADER); //dona'm un id per un shader. La GPU retorna un ID no utilitzat per aquest shader
-		glShaderSource(vertex_shader, 1, &vertex_shader_source, NULL); //pugem el codi a la GPU
+		glShaderSource(vertex_shader, 1, &vertexShaderSource, NULL); //pugem el codi a la GPU
 		glCompileShader(vertex_shader); //Compilem el shader (o operem dades)
 		//Bind
 		//Destroy
 
-
+		
 		fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-		glShaderSource(fragment_shader, 1, fragment_shader_source, NULL); //pugem el codi a la GPU
+		glShaderSource(fragment_shader, 1, &fragmentShaderSource, NULL); //pugem el codi a la GPU
 		// Operem el shader
 		glCompileShader(fragment_shader);
 
@@ -257,6 +259,19 @@ namespace OBJLoading
 		glUniformMatrix4fv(glGetUniformLocation(program, "objMat"), 1, GL_FALSE, glm::value_ptr(objMat));
 		glUniformMatrix4fv(glGetUniformLocation(program, "mv_Mat"), 1, GL_FALSE, glm::value_ptr(RenderVars::_modelView));
 		glUniformMatrix4fv(glGetUniformLocation(program, "mvpMat"), 1, GL_FALSE, glm::value_ptr(RenderVars::_MVP));
+
+		glUniform4f(glGetUniformLocation(program, "lightColor"), lightColor[0], lightColor[1], lightColor[2], lightColor[3]);
+		glUniform4f(glGetUniformLocation(program, "ambientColor"), ambientColor[0], ambientColor[1], ambientColor[2], ambientColor[3]);
+		glUniform1f(glGetUniformLocation(program, "ambientStrength"), ambientStrength);
+
+		glUniform3f(glGetUniformLocation(program, "lightDir"), lightDir[0], lightDir[1], lightDir[2]);
+
+		glm::vec3 cameraPosition =  glm::inverse(RenderVars::_modelView) * glm::vec4(0, 0, 0, 1);
+		glUniform3f(glGetUniformLocation(program, "viewPos"), cameraPosition[0], cameraPosition[1], cameraPosition[2]);
+		glUniform1f(glGetUniformLocation(program, "specularStrength"), specularStrength);
+		glUniform1i(glGetUniformLocation(program, "specularIntensity"), specularIntensity);
+
+
 		time_t currentTime = SDL_GetTicks() / 1000;
 		glPointSize(40.0f);
 		glBindVertexArray(VAO);
